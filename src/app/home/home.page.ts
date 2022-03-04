@@ -23,10 +23,11 @@ export class HomePage {
           type: 'text',
           placeholder: 'O que deseja adicionar?'
         },
+        
       ],
       buttons: [
         {
-          text: 'Cancelar',
+          text: 'cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
@@ -35,9 +36,9 @@ export class HomePage {
         }, {
           text: 'Adicionar',
           handler: (form) => {
-            console.log(form.newTask);
+            console.log(form.task);
 
-           this.add(form.newTask);
+           this.add(form.task);
           }
         }
       ]
@@ -47,19 +48,19 @@ export class HomePage {
 
   }
 
-  async add(newTask : string){
-    if(newTask.trim().length < 1){
+  async add(newTask: string) {
+    if (newTask.trim().length < 1)
+    {
       const toast = await this.toastCtrl.create({
-        message : 'informe uma tarefa',
-        duration : 2000,
-        position : 'top'
+          message: 'Informe o que deseja fazer',
+          duration: 2000,
+          position: 'top',
       });
-    
+
       toast.present();
       return;
     }
-
-    let task = {name : newTask, done : false};
+    let task = { name: newTask, done: false};
 
     this.tasks.push(task);
 
