@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { AlertController} from '@ionic/angular';
+import { ActionSheetController, AlertController} from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-home',
@@ -10,8 +11,15 @@ import { ToastController } from '@ionic/angular';
 export class HomePage {
 
   tasks : any[] = [];
+  ActionSheetController: any;
 
-  constructor(private alertCtrl: AlertController, private toastCtrl : ToastController) {}
+  constructor(private alertCtrl: AlertController, private toastCtrl : ToastController, private actionSheetCtrl : ActionSheetController) {
+    let taskJson = localStorage.getItem('taskDb');
+
+    if (taskJson != null){
+      this.tasks = JSON.parse(taskJson);
+    }
+  }
 
   async showAdd(){
     
@@ -71,4 +79,40 @@ export class HomePage {
     localStorage.setItem('taskDb', JSON.stringify(this.tasks));
   }
 
+  async openActions(task : any){
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'O que deseja fazer?',
+      cssClass: 'my-custom-class',
+      buttons: [{
+        text: task.done ? 'Desmarcar' : 'Marcar',
+        icon: task.done ? 'radio-button-off' : 'checkmark-circle',
+        handler: () => {
+          task.done = !task.done;
+
+          this.updateLocalStorage();
+        }
+      }, {
+        text: 'Cancelar',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }]
+    });
+    await actionSheet.present();
+
+    const { role, data } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role and data', role, data);
+  }
+
+  delete(task : any){
+    this.tasks = this.tasks.filter(taskArray => task != taskArray);
+    this.updateLocalStorage();
+  }
+
 }
+
+  
+
+
